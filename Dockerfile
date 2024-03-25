@@ -1,18 +1,15 @@
-FROM conda/miniconda3
-
-# Set the working directory
-WORKDIR /app
-
-# Copy the current directory contents into the container at /app
-COPY . /app
+FROM python:3.11-bullseye
+WORKDIR /usr/src/app
+COPY . .
 
 # Install any needed packages specified in requirements.txt
-RUN conda create -n llava_int -c conda-forge -c pytorch python=3.10.8 pytorch=2.0.1 -y
-RUN conda init bash
-RUN conda activate llava_int
-WORKDIR /app/LLaVA-Interactive-Demo
-RUN pip install -r requirements.txt
+SHELL ["/bin/bash", "-c"]
+RUN python3 -m venv /opt/venv
+RUN source /opt/venv/bin/activate
+RUN python3 -m pip install -r requirements.txt
 RUN source setup.sh
+
+EXPOSE 5000
 
 WORKDIR /app
 ENTRYPOINT ["run_demo.sh"]
